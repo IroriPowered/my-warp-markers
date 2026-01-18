@@ -1,0 +1,17 @@
+{
+    "Group": "IroriPowered",
+    "Name": "MyWarpMarkers",
+    "Version": "1.0.0",
+    "Website": "https://www.irori.cc/",
+    "Description": "See only the warp markers you own!",
+    "Main": "cc.irori.mywarpmarkers.MyWarpMarkers",
+    "Authors": [
+        {
+            "Name": "KabanFriends",
+            "Url": "https://github.com/KabanFriends"
+        }
+    ],
+    "ServerVersion": "*",
+    "Dependencies": {},
+    "OptionalDependencies": {}
+}
