@@ -5,6 +5,12 @@ plugins {
 group = "cc.irori"
 version = "1.0.0"
 
+repositories {
+    mavenCentral()
+    maven("https://maven.hytale.com/release")
+    maven("https://maven.hytale.com/pre-release")
+}
+
 dependencies {
-    compileOnly(files("libs/HytaleServer.jar"))
+    compileOnly(libs.hytale)
 }
