@@ -9,9 +9,9 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.WorldMapTracker;
 import com.hypixel.hytale.server.core.universe.world.events.AddWorldEvent;
 import com.hypixel.hytale.server.core.universe.world.worldmap.WorldMapManager;
+import com.hypixel.hytale.server.core.universe.world.worldmap.markers.MapMarkerTracker;
 import com.hypixel.hytale.server.core.util.PositionUtil;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -52,7 +52,8 @@ public class MyWarpMarkers extends JavaPlugin {
         private static final MyWarpMarkerProvider INSTANCE = new MyWarpMarkerProvider();
 
         @Override
-        public void update(World world, GameplayConfig gameplayConfig, WorldMapTracker tracker, int chunkViewRadius, int playerChunkX, int playerChunkZ) {
+        public void update(World world, MapMarkerTracker tracker, int chunkViewRadius, int playerChunkX, int playerChunkZ) {
+            GameplayConfig gameplayConfig = world.getGameplayConfig();
             Map<String, Warp> warps = TeleportPlugin.get().getWarps();
             if (warps.isEmpty() || !gameplayConfig.getWorldMapConfig().isDisplayWarps()) {
                 return;
