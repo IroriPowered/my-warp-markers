@@ -1,5 +1,5 @@
 [versions]
-hytale = "2026.01.22-6f8bdbdc4"
+hytale = "2026.02.17-255364b8e"
 
 [libraries]
 hytale = { group = "com.hypixel.hytale", name = "Server", version.ref = "hytale" }

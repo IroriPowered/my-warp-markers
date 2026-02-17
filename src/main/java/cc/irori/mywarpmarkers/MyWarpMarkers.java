@@ -11,7 +11,9 @@ import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.events.AddWorldEvent;
 import com.hypixel.hytale.server.core.universe.world.worldmap.WorldMapManager;
+import com.hypixel.hytale.server.core.universe.world.worldmap.markers.MapMarkerBuilder;
 import com.hypixel.hytale.server.core.universe.world.worldmap.markers.MapMarkerTracker;
+import com.hypixel.hytale.server.core.universe.world.worldmap.markers.MarkersCollector;
 import com.hypixel.hytale.server.core.util.PositionUtil;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -52,14 +54,13 @@ public class MyWarpMarkers extends JavaPlugin {
         private static final MyWarpMarkerProvider INSTANCE = new MyWarpMarkerProvider();
 
         @Override
-        public void update(World world, MapMarkerTracker tracker, int chunkViewRadius, int playerChunkX, int playerChunkZ) {
+        public void update(@NonNullDecl World world, @NonNullDecl Player player, @NonNullDecl MarkersCollector collector) {
             GameplayConfig gameplayConfig = world.getGameplayConfig();
             Map<String, Warp> warps = TeleportPlugin.get().getWarps();
             if (warps.isEmpty() || !gameplayConfig.getWorldMapConfig().isDisplayWarps()) {
                 return;
             }
 
-            Player player = tracker.getPlayer();
             Pattern pattern = Pattern.compile("\\b" + Pattern.quote(player.getDisplayName()) + "\\b", Pattern.CASE_INSENSITIVE);
 
             for(Warp warp : warps.values()) {
@@ -67,23 +68,12 @@ public class MyWarpMarkers extends JavaPlugin {
                     continue;
                 }
                 if (warp.getId().equalsIgnoreCase(player.getDisplayName()) || pattern.matcher(warp.getId()).find()) {
-                    tracker.trySendMarker(
-                            chunkViewRadius,
-                            playerChunkX,
-                            playerChunkZ,
-                            warp.getTransform().getPosition(),
-                            warp.getTransform().getRotation().getYaw(),
-                            "Warp-" + warp.getId(),
-                            "Warp: " + warp.getId(),
-                            warp,
-                            (id, name, w) -> new MapMarker(
-                                    id,
-                                    name,
-                                    "Warp.png",
-                                    PositionUtil.toTransformPacket(w.getTransform()),
-                                    null
-                            )
-                    );
+                    MapMarker marker = new MapMarkerBuilder(
+                            "Warp-" + warp.getId(), "Warp.png",
+                            warp.getTransform()
+                    )
+                            .withCustomName("Warp: " + warp.getId()).build();
+                    collector.add(marker);
                 }
             }
         }
