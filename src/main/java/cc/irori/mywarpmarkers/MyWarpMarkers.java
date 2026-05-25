@@ -2,19 +2,20 @@ package cc.irori.mywarpmarkers;
 
 import com.hypixel.hytale.builtin.teleport.TeleportPlugin;
 import com.hypixel.hytale.builtin.teleport.Warp;
+import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.protocol.packets.worldmap.MapMarker;
 import com.hypixel.hytale.server.core.asset.type.gameplay.GameplayConfig;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.events.AddWorldEvent;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.universe.world.worldmap.WorldMapManager;
 import com.hypixel.hytale.server.core.universe.world.worldmap.markers.MapMarkerBuilder;
-import com.hypixel.hytale.server.core.universe.world.worldmap.markers.MapMarkerTracker;
 import com.hypixel.hytale.server.core.universe.world.worldmap.markers.MarkersCollector;
-import com.hypixel.hytale.server.core.util.PositionUtil;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.Map;import java.util.regex.Pattern;
@@ -61,13 +62,23 @@ public class MyWarpMarkers extends JavaPlugin {
                 return;
             }
 
-            Pattern pattern = Pattern.compile("\\b" + Pattern.quote(player.getDisplayName()) + "\\b", Pattern.CASE_INSENSITIVE);
+            Ref<EntityStore> ref = player.getReference();
+            if (ref == null) {
+                return;
+            }
+
+            PlayerRef playerRef = ref.getStore().getComponent(ref, PlayerRef.getComponentType());
+            if (playerRef == null) {
+                return;
+            }
+
+            Pattern pattern = Pattern.compile("\\b" + Pattern.quote(playerRef.getUsername()) + "\\b", Pattern.CASE_INSENSITIVE);
 
             for(Warp warp : warps.values()) {
                 if (!warp.getWorld().equals(world.getName())) {
                     continue;
                 }
-                if (warp.getId().equalsIgnoreCase(player.getDisplayName()) || pattern.matcher(warp.getId()).find()) {
+                if (warp.getId().equalsIgnoreCase(playerRef.getUsername()) || pattern.matcher(warp.getId()).find()) {
                     MapMarker marker = new MapMarkerBuilder(
                             "Warp-" + warp.getId(), "Warp.png",
                             warp.getTransform()
